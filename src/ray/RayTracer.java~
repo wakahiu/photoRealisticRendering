@@ -132,7 +132,7 @@ public class RayTracer {
             blockStart = System.currentTimeMillis();
             
           	
-          	//lights = scene.getPointLights();
+          	lights = scene.getPointLights();
         	//System.out.print("In renderImage forLoop " + lights.size());
         	
             renderBlock(scene, image, offsetX, offsetY, sizeX, sizeY);

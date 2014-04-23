@@ -97,7 +97,7 @@ public class PhongShader implements Renderer {
 			if(incidentLightCount > 0){
         		outColor.set( r, g, b);
         	}else{
-        		outColor.set( color.r*0.01, color.g*0.01, color.b*0.01);
+        		outColor.set( color.r*0.01, color.g0.01, color.b*0.01);
         	}
         	return;
         }

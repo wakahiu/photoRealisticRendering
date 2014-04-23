@@ -46,7 +46,7 @@
   </material>
   <material name="green" type="Homogeneous">
     <brdf type="Lambertian">
-      <reflectance>0.1 0.45 0.15</reflectance>
+      <reflectance>0.1 0.5 0.15</reflectance>
     </brdf>
   </material>
   <material name="grey" type="Homogeneous">

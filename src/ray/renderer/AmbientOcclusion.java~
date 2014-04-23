@@ -1,7 +1,5 @@
 package ray.renderer;
 
-import java.util.ArrayList;
-
 import ray.math.Geometry;
 import ray.math.Point2;
 import ray.math.Vector3;
@@ -9,7 +7,6 @@ import ray.misc.Color;
 import ray.misc.IntersectionRecord;
 import ray.misc.Ray;
 import ray.misc.Scene;
-import ray.light.PointLight;
 import ray.sampling.SampleGenerator;
 
 public class AmbientOcclusion implements Renderer {
