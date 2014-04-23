@@ -11,11 +11,14 @@
     <length>0.2</length>
   </renderer>
  -->
-  
+  <!--
   <renderer type="PhongShader">
       <alpha>4.</alpha>
   </renderer>
+  -->
   
+  <renderer type="DirectOnlyRenderer">
+  </renderer>
 	
   <light type="PointLight">
       <location>-2. 0. 2.</location>

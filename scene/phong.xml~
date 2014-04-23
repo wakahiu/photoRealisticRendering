@@ -11,11 +11,15 @@
     <length>0.2</length>
   </renderer>
  -->
-  
+  <!--
   <renderer type="PhongShader">
       <alpha>4.</alpha>
   </renderer>
+  -->
   
+  <renderer type="DirectOnlyRenderer">
+      <alpha>4.</alpha>
+  </renderer>
 	
   <light type="PointLight">
       <location>-2. 0. 2.</location>
@@ -46,7 +50,7 @@
   </material>
   <material name="green" type="Homogeneous">
     <brdf type="Lambertian">
-      <reflectance>0.1 0.5 0.15</reflectance>
+      <reflectance>0.1 0.45 0.15</reflectance>
     </brdf>
   </material>
   <material name="grey" type="Homogeneous">

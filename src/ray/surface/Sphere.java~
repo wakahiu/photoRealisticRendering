@@ -139,7 +139,7 @@ public class Sphere extends Surface {
     	Vector3 d = new Vector3( dx, dy, dz );
     	Vector3 e = new Vector3( ex, ey, ez );
     	
-    	Vector3 e_c = new Vector3( dx - ex, dy-ey , dz-ez );
+    	Vector3 e_c = new Vector3( ex - center.x, ey - center.y, ez - center.z );
     	
     	//Find out how many solutions are there from the discriminant.
     	double dec = d.dot( e_c );
@@ -150,6 +150,7 @@ public class Sphere extends Surface {
     	
     	//If the discriminant if negative, the squareroot is imaginary and the
     	//line and sphere do not intersect.
+    	
     	if(disc < 0.0 )
     		return false;
     	
@@ -170,7 +171,7 @@ public class Sphere extends Surface {
     	
     	//Set the co-ordinate frame's origin.
     	Point3 ip = new Point3( ex, ey, ez );		//Intersection point
-     	ip.scaleAd( t , e );
+     	ip.scaleAdd( t , d );
      	outRecord.frame.o.set( ip.x , ip.y, ip.z );
      	
      	//Set the normal vector
@@ -178,7 +179,7 @@ public class Sphere extends Surface {
      	outRecord.frame.initFromW();
      	
     	
-        return false;
+        return true;
     }
     
     /**

@@ -1,5 +1,6 @@
 package ray.renderer;
 
+import java.lang.Math;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -43,30 +44,33 @@ public class PhongShader implements Renderer {
         	Vector3 tempW = iRec.frame.w;
        		Vector3 N = new Vector3(tempW.x,tempW.y,tempW.z);
        		
+       		Vector3 V = ray.direction;
+       		
         	//Get the BRDF of the material at the point of intersection.
         	Material mat = iRec.surface.getMaterial();
-        	Color color = new Color();
+        	Color matColor		= new Color();
+        	Color ambColor	= new Color();
         	
-        	mat.getBRDF(iRec).evaluate( iRec.frame, N , N, color );
+        	scene.getBackground().evaluate(ray.direction,ambColor);
+        	mat.getBRDF(iRec).evaluate( iRec.frame, N , N, matColor );
         	        	
-        	double r = 0;
-        	double g = 0;
-        	double b = 0;
+        	double r = ambColor.r * matColor.r;
+        	double g = ambColor.g * matColor.g;
+        	double b = ambColor.b * matColor.b;
         	       		
        		//Point of intersection of the ray with the surface.
        		Point3 P = iRec.frame.o;
        		
         	//Multiple light sources may be present. Iterate through them.
         	ArrayList<PointLight> lights = scene.getPointLights();
-        	//System.out.println(lights.size());
        		Iterator<PointLight> itLight = lights.iterator();
        		
        		int incidentLightCount = lights.size();
        		
        		while( itLight.hasNext() ){
        			PointLight light = itLight.next();
-       			Color lightColor = light.diffuse;
-       			//itLight.remove();
+       			Color lightDiff = light.diffuse;
+       			Color lightSpec = light.specular;
        			
        			Vector3 L = new Vector3(	light.location.x - P.x,
        										light.location.y - P.y,
@@ -81,24 +85,34 @@ public class PhongShader implements Renderer {
        				continue;
        			}
        			
-       			//Diffuse component.
-       			r += L_dot_N * color.r * lightColor.r;
-       			g += L_dot_N * color.g * lightColor.g;
-       			b += L_dot_N * color.b * lightColor.b;
        			
-       			//
-       			//Ambient and specular component?
-       			//
-       			  			
+       			//Diffuse component.
+       			r += L_dot_N * matColor.r * lightDiff.r;
+       			g += L_dot_N * matColor.g * lightDiff.g;
+       			b += L_dot_N * matColor.b * lightDiff.b;
+       			
+       			
+       			
+       			//Specular component?
+       			Vector3 R = new Vector3(-L.x + L_dot_N*2*N.x, 
+       									-L.y + L_dot_N*2*N.y, 
+       									-L.z + L_dot_N*2*N.z);
+       			R.normalize();
+       			
+       			double R_dot_V = Math.max( 0 , -R.dot(V) );
+       			
+       			
+       			r += Math.pow( R_dot_V, phongCoeff) * matColor.r * lightSpec.r;
+       			g += Math.pow( R_dot_V, phongCoeff) * matColor.g * lightSpec.g;
+       			b += Math.pow( R_dot_V, phongCoeff) * matColor.b * lightSpec.b;
+       			
+       				
        		}
 			
 			//Check to see if any light sources hit the surface. If not, the color
-			//at that point is the color of the material.
-			if(incidentLightCount > 0){
-        		outColor.set( r, g, b);
-        	}else{
-        		outColor.set( color.r*0.01, color.g*0.01, color.b*0.01);
-        	}
+			//at that point is the color of the background.
+			outColor.set( r, g, b);
+			
         	return;
         }
         

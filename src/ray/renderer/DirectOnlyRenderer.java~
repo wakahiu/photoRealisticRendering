@@ -71,7 +71,7 @@ public class DirectOnlyRenderer implements Renderer {
         	}else{
         		
         		ProjSolidAngleIlluminator PSAI = new ProjSolidAngleIlluminator();
-        		PSAI.directIllumination(scene,ray.direction,);
+        		PSAI.directIllumination(scene);
 
         		return;
         	}
