@@ -83,7 +83,7 @@
   </surface>
 
   <surface type="Sphere">
-    <material ref="red" />
+    <material ref="light" />
     <center>-1.2 -1. 0.</center>
     <radius>0.7</radius>
   </surface>

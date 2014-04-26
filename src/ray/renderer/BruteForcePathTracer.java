@@ -33,6 +33,11 @@ public class BruteForcePathTracer extends PathTracer {
         IntersectionRecord iRec = new IntersectionRecord();
 
         if((level < depthLimit) && scene.getFirstIntersection(iRec,ray) ){
+        
+        	//System.out.println("In BruteForce: sampleIndex " + sampleIndex + " level " + level);
+        	
+        	
+        	
         	//Get the BRDF of the material at the point of intersection.
         	Material mat = iRec.surface.getMaterial();
         	Vector3 outDir = new Vector3(1.0,1.0,1.0);
@@ -41,17 +46,20 @@ public class BruteForcePathTracer extends PathTracer {
         	if( mat.isEmitter() ){
         		
         		//emittedRadiance
-        		Color emitColor = new Color(0.0,0.0,0.0);
-        		mat.emittedRadiance(null,emitColor);
-        		outColor.add(emitColor);
+				Color emitColor = new Color(0.0,0.0,0.0);
+				mat.emittedRadiance(null,emitColor);
+				outColor.add(emitColor);
+				
         	}
+        	
         	
         	//Consider negating the scene ray.direcion.
     		//Compute (recursively) the amount of light hitting the points.
     		gatherIllumination(scene, ray.direction, iRec,sampler,sampleIndex,level,outColor);
+    		
+    		return;
         	
         }
-        
     	scene.getBackground().evaluate(ray.direction,outColor);
     	
     }

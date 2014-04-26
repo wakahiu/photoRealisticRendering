@@ -54,7 +54,7 @@ public abstract class PathTracer extends DirectOnlyRenderer {
     	/*
    		*	Direct illumination
    		*/
-   		/*
+   		
     	Material mat = iRec.surface.getMaterial();
     	BRDF matBRDF = mat.getBRDF(iRec);
     	
@@ -65,78 +65,79 @@ public abstract class PathTracer extends DirectOnlyRenderer {
    		//Point of intersection of the ray with the surface.
    		Point3 P = iRec.frame.o;
    		
-   		Color matColor	= new Color();
+        //Ambient lighting as seen from camera
         Color ambColor	= new Color();
-        
-        //Ambient lighting.
 	   	scene.getBackground().evaluate(outDir,ambColor);
-    	//matBRDF.evaluate( iRec.frame, incDir , outDir, matColor );
-    	        	
-    	double r = ambColor.r * matColor.r;
-    	double g = ambColor.g * matColor.g;
-    	double b = ambColor.b * matColor.b;
+	   	
+	   	//Create a seed from random sampling.
+	   	Point2 seed = new Point2(1.0,2.0);									//<<--------- TODO
+	   	
+    	//Creata new vector in a random direction.
+    	Color outWeight = new Color();
+    	Vector3 bounceDir = new Vector3();
+    	matBRDF.generate(iRec.frame,outDir,bounceDir,seed,outWeight);
+    	bounceDir.normalize();
     	
-   		while( iterLight.hasNext() ){
+    	//Get the material color at this point.
+    	Color matColor	= new Color();
+    	matBRDF.evaluate( iRec.frame, bounceDir , outDir, matColor );
+    	        	
+    	double r = ambColor.r*matColor.r;
+    	double g = ambColor.g*matColor.g;
+    	double b = ambColor.b*matColor.b;
+    	
+   		while( iterLight.hasNext()){
    			PointLight light = iterLight.next();
    			Color lightDiff = light.diffuse;
-       		Color lightSpec = light.specular;
-       			
-   			
+       		
    			Vector3 L = new Vector3(	(light.location.x-P.x),
    										(light.location.y-P.y),
    										(light.location.z-P.z));
    			
    			L.normalize();
    			
-   			scene.frame.frameToCanonical( L );
-    		double matPDF = matBRDF.pdf( scene.frame , L , outDir , outColor );
-    		
-    		r += lightDiff.r * matPDF;
-   			g += lightDiff.g * matPDF;
-   			b += lightDiff.b * matPDF;
-   				
-   			/*
    			//Make a shadow ray. A ray from the location of incidence to
    			//light source.
    			IntersectionRecord iRecBounce = new IntersectionRecord();
    			Ray rayBounce = new Ray(P,L);
    			rayBounce.makeOffsetRay();
-   			
-   			L_dot_out = outDir.dot(L);		//Cos theta
-   			
    			//Check for shadows or occlusions.
    			if(scene.getAnyIntersection(iRecBounce,rayBounce)){
    				continue;
    			}
-
    			
+   			
+    		double matPDF = matBRDF.pdf( iRec.frame , L , outDir );
+    		
+    		r += lightDiff.r * matPDF;
+   			g += lightDiff.g * matPDF;
+   			b += lightDiff.b * matPDF;
    			
    		}
    		
-    	Color outWeight = new Color(0.0,0.0,0.0);
+   		//Add light from illuminaraires
+   		Color outRadiance = new Color(0.0,0.0,0.0);
+   		scene.incidentRadiance( P, outDir, outRadiance);
+
+    	double matPDF = Math.PI * matBRDF.pdf(iRec.frame,bounceDir,outDir);
     	
-    	matBRDF.generate(iRec.frame,null,outDir,seed,outWeight);
-    	outDir.normalize();
+    	/*
+    	* Indirect lighting
+    	*/
+    	IntersectionRecord iRecBounce = new IntersectionRecord();
+   		Ray rayBounce = new Ray(P,bounceDir);
+   		rayBounce.makeOffsetRay();
    		
+   		//rayRadianceRecursive(scene,rayBounce,sampler,sampleIndex,++level,outColor);
+   			
    		/*
-   		*	Indirect illumination
-   		*/
-   		//A ray in the new directon.
-   		Ray ray = new Ray(P,outDir);
-   		ray.makeOffsetRay();
-   		rayRadianceRecursive(scene,ray,sampler,sampleIndex,++level,outColor);
-   		
-   		
-   		
-   		/*   		
-   		
-   		//Color outRadiance = new Color();
-   		//scene.incidentRadiance(P,outDir,outRadiance);
-    	
-    	outColor.set(	outWeight.r*r,
-    					outWeight.g*g,
-    					outWeight.b*b);
-    					*/
+    	outColor.set(	outWeight.r*r/Math.PI + outRadiance.r*matColor.r*matPDF,
+    					outWeight.g*g/Math.PI + outRadiance.g*matColor.g*matPDF,
+    					outWeight.b*b/Math.PI + outRadiance.b*matColor.b*matPDF);
+    	*/
+    	outColor.set(	outWeight.r*r/Math.PI + matColor.r*matPDF,
+    					outWeight.g*g/Math.PI + outRadiance.g*matColor.g*matPDF,
+    					outWeight.b*b/Math.PI + outRadiance.b*matColor.b*matPDF);
     	
     }
 }

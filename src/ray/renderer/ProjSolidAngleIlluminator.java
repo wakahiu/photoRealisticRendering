@@ -95,26 +95,23 @@ public class ProjSolidAngleIlluminator extends DirectIlluminator {
    										(light.location.z-P.z));
    			
    			L.normalize();
-   			iRec.frame.frameToCanonical( L );
    			
    			//Make a shadow ray. A ray from the location of incidence to
    			//light source.
    			IntersectionRecord iRecBounce = new IntersectionRecord();
    			Ray rayBounce = new Ray(P,L);
    			rayBounce.makeOffsetRay();
-   			
-   			L_dot_out = outDir.dot(L);		//Cos theta
-   			
    			//Check for shadows or occlusions.
    			if(scene.getAnyIntersection(iRecBounce,rayBounce)){
    				continue;
    			}
    			
+   			
+   			L_dot_out = outDir.dot(L);		//Cos theta
    			   			
    			r += lightDiff.r *L_dot_out;
    			g += lightDiff.g *L_dot_out;
    			b += lightDiff.b *L_dot_out;
-   			
    		}
    		
    		//Add light from illuminaraires
@@ -125,9 +122,9 @@ public class ProjSolidAngleIlluminator extends DirectIlluminator {
 
     	double matPDF = Math.PI * matBRDF.pdf(iRec.frame,outDir,incDir);
     	
-    	outColor.set(	outWeight.r*r + outRadiance.r*matColor.r*matPDF,
-    					outWeight.g*g + outRadiance.g*matColor.g*matPDF,
-    					outWeight.b*b + outRadiance.b*matColor.b*matPDF);
+    	outColor.set(	outWeight.r*r/Math.PI + outRadiance.r*matColor.r*matPDF,
+    					outWeight.g*g/Math.PI + outRadiance.g*matColor.g*matPDF,
+    					outWeight.b*b/Math.PI + outRadiance.b*matColor.b*matPDF);
     					
     }
     

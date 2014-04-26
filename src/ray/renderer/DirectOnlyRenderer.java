@@ -68,6 +68,9 @@ public class DirectOnlyRenderer implements Renderer {
         	Material mat = iRec.surface.getMaterial();
         	Vector3 outDir = new Vector3(1.0,1.0,1.0);
         	
+        	//LuminaireSamplingRecord LRec = new LuminaireSamplingRecord();
+        	//LRec.set(iRec);
+        	
         	//Light source
         	if( mat.isEmitter() ){
         		
