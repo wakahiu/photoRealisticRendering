@@ -2,8 +2,8 @@
   <image> 560 560 </image>
 
   <sampler type="JitteredSampler">
-    <numSamplesU>35</numSamplesU>
-    <numSamplesV>35</numSamplesV>
+    <numSamplesU>3</numSamplesU>
+    <numSamplesV>3</numSamplesV>
   </sampler>
 
   <!--
@@ -19,7 +19,7 @@
   
   <renderer type="DirectOnlyRenderer">
   </renderer>
-	
+  
   <light type="PointLight">
       <location>-2. 0. 2.</location>
       <diffuse>1.0 0. 0.</diffuse>
@@ -83,7 +83,7 @@
   </surface>
 
   <surface type="Sphere">
-    <material ref="red" />
+    <material ref="light" />
     <center>-1.2 -1. 0.</center>
     <radius>0.7</radius>
   </surface>

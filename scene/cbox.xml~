@@ -1,39 +1,65 @@
 <scene>
-  <image> 560 560 </image>
+
+  <image>
+    560 560
+  </image>
 
   <sampler type="JitteredSampler">
-    <numSamplesU>3</numSamplesU>
-    <numSamplesV>3</numSamplesV>
+    <numSamplesU>4</numSamplesU>
+    <numSamplesV>4</numSamplesV>
   </sampler>
 
-  <!--
+	<!--
   <renderer type="AmbientOcclusion">
     <length>0.2</length>
   </renderer>
- -->
+  -->
+  
   <!--
   <renderer type="PhongShader">
       <alpha>4.</alpha>
   </renderer>
   -->
+<!--
+  <renderer type="BruteForcePathTracer">
+    <depthLimit>5</depthLimit>
+    <backgroundIllumination>1</backgroundIllumination>
+    <directIlluminator type="LuminairesIlluminator" />
+  </renderer>
+
+  <renderer type="BruteForcePathTracer">
+    <depthLimit>5</depthLimit>
+    <backgroundIllumination>1</backgroundIllumination>
+    <directIlluminator type="LuminairesIlluminator" />
+  </renderer>
+
+
+  <renderer type="DirectOnlyRenderer">
+    <directIlluminator type="LuminairesIlluminator" />
+  </renderer>
+  -->
   
   <renderer type="DirectOnlyRenderer">
+    <directIlluminator type="LuminairesIlluminator" />
   </renderer>
+
+<!--
+  <renderer type="BruteForcePathTracer">
+    <depthLimit>5</depthLimit>
+    <backgroundIllumination>1</backgroundIllumination>
+    <directIlluminator type="LuminairesIlluminator" />
+  </renderer>
+  __>
   
-  <light type="PointLight">
-      <location>-2. 0. 2.</location>
-      <diffuse>1.0 0. 0.</diffuse>
-  </light>
 
   <light type="PointLight">
-      <location>2. 0. 2.</location>
-      <diffuse>0.0 1. 0.</diffuse>
+      <location>0. 510. 0</location>
   </light>
 
   <camera>
-    <eye>1.59772 -5.48982 4.05773</eye>
-    <target>1.35925 -4.66916 3.53846</target>
-    <up>-0.144899 0.498646 0.854609</up>
+    <eye>278.0 273.0 -800.0</eye>
+    <target>278.0 273.0 0</target>
+    <up>0 1 0</up>
     <yFOV>40</yFOV>
   </camera>
 
@@ -60,33 +86,31 @@
 
   <material name="light" type="LambertianEmitter">
     <brdf type="Lambertian">
-      <reflectance>0.9 0.0 0.78</reflectance>
+      <reflectance>0.78 0.78 0.78</reflectance>
     </brdf>
     <radiance>60 60 60</radiance>
   </material>
 
+  <surface type="Mesh">
+    <material ref="white" />
+    <data>cbox-white.msh</data>
+  </surface>
 
   <surface type="Mesh">
-    <material ref="grey" />
-    <data>floor.msh</data>
+    <material ref="light" />
+    <data>cbox-light.msh</data>
   </surface>
 
   <surface type="Mesh">
     <material ref="green" />
-    <data>monkey.msh</data>
+    <data>cbox-green.msh</data>
   </surface>
 
-  <surface type="Sphere">
-    <material ref="green" />
-    <center>1.2 -1. 0.</center>
-    <radius>0.4</radius>
-  </surface>
-
-  <surface type="Sphere">
+  <surface type="Mesh">
     <material ref="red" />
-    <center>-1.2 -1. 0.</center>
-    <radius>0.7</radius>
+    <data>cbox-red.msh</data>
   </surface>
+
   <background type="Uniform">
     <radiance>0.0 0.0 0.0</radiance>
   </background>

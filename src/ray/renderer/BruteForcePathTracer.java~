@@ -46,7 +46,7 @@ public class BruteForcePathTracer extends PathTracer {
         		outColor.add(emitColor);
         	}
         	
-        	//Consider negating the scene ray.direcion.
+        	//Consider negating the scene.
     		//Compute (recursively) the amount of light hitting the points.
     		gatherIllumination(scene, ray.direction, iRec,sampler,sampleIndex,level,outColor);
         	

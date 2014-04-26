@@ -53,13 +53,7 @@ public class ProjSolidAngleIlluminator extends DirectIlluminator {
     	
     	Material mat = iRec.surface.getMaterial();
     	BRDF matBRDF = mat.getBRDF(iRec);
-    	
-    	Color outWeight = new Color();
-    	
-    	matBRDF.generate(iRec.frame,null,outDir,seed,outWeight);
-    	outDir.normalize();
-   	    					
-    					
+    	    					
     	//Point of intersection of the ray with the surface.
    		Point3 P = iRec.frame.o;
    		
@@ -72,8 +66,17 @@ public class ProjSolidAngleIlluminator extends DirectIlluminator {
    		
    		Color matColor	= new Color();
         Color ambColor	= new Color();
+        
+        //Ambient lighting.
 	   	scene.getBackground().evaluate(outDir,ambColor);
+	   	
+	   	//Material color
     	matBRDF.evaluate( iRec.frame, incDir , outDir, matColor );
+    	
+    	//Radiance at this point
+    	Color outWeight = new Color();
+    	matBRDF.generate(iRec.frame,incDir,outDir,seed,outWeight);
+    	outDir.normalize();
     	        	
     	double r = ambColor.r * matColor.r;
     	double g = ambColor.g * matColor.g;
@@ -92,7 +95,8 @@ public class ProjSolidAngleIlluminator extends DirectIlluminator {
    										(light.location.z-P.z));
    			
    			L.normalize();
-   				
+   			iRec.frame.frameToCanonical( L );
+   			
    			//Make a shadow ray. A ray from the location of incidence to
    			//light source.
    			IntersectionRecord iRecBounce = new IntersectionRecord();
@@ -113,12 +117,19 @@ public class ProjSolidAngleIlluminator extends DirectIlluminator {
    			
    		}
    		
-   		//Color outRadiance = new Color();
-   		//scene.incidentRadiance(P,outDir,outRadiance);
+   		//Add light from illuminaraires
     	
-    	outColor.set(	outWeight.r*r,
-    					outWeight.g*g,
-    					outWeight.b*b);
+   		//Radiance from illuminaire.
+   		Color outRadiance = new Color(0.0,0.0,0.0);
+   		scene.incidentRadiance( P, outDir, outRadiance);
+
+    	double matPDF = Math.PI * matBRDF.pdf(iRec.frame,outDir,incDir);
+
+    	
+    	outColor.set(	outWeight.r*r + outRadiance.r*matColor.r*matPDF,
+    					outWeight.g*g + outRadiance.g*matColor.g*matPDF,
+    					outWeight.b*b + outRadiance.b*matColor.b*matPDF);
+    					
     }
     
 }

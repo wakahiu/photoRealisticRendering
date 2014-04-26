@@ -59,7 +59,7 @@ public class DirectOnlyRenderer implements Renderer {
     	// 2) direct reflected radiance from other lights. This is by implementing the function
     	//    ProjSolidAngleIlluminator.directIlluminaiton(...), and call direct.directIllumination(...) in this
     	//    function here.
-    	
+    	/*
     	//Find the ray intersection with any surface
         IntersectionRecord iRec = new IntersectionRecord();
         
@@ -85,8 +85,9 @@ public class DirectOnlyRenderer implements Renderer {
         	return;
         	
         }
+        */
         
-    	scene.getBackground().evaluate(ray.direction,outColor);
+    	///scene.getBackground().evaluate(ray.direction,outColor);
     	
     }
 
@@ -97,6 +98,7 @@ public class DirectOnlyRenderer implements Renderer {
      * @param dir      	The exitant direction (surface coordinates)
      * @param outColor  The emitted radiance is written to this color
      */
+     /*
     protected void emittedRadiance(IntersectionRecord iRec, Vector3 dir, Color outColor) {
     	// W4160 TODO (A)
         // If material is emitting, query it for emission in the relevant direction.
@@ -107,8 +109,7 @@ public class DirectOnlyRenderer implements Renderer {
     	
     	//emittedRadiance
         mat.emittedRadiance(null,outColor);
-        
-        outColor.set( 1.0, 0.0, 1.0);
     	
     }
+    */
 }
