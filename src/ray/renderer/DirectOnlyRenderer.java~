@@ -3,7 +3,9 @@ package ray.renderer;
 import java.lang.Math;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Random;
 
+import ray.brdf.BRDF;
 import ray.material.Material;
 import ray.math.Point2;
 import ray.math.Point3;
@@ -64,74 +66,24 @@ public class DirectOnlyRenderer implements Renderer {
         if(scene.getFirstIntersection(iRec,ray)){
         	//Get the BRDF of the material at the point of intersection.
         	Material mat = iRec.surface.getMaterial();
+        	Vector3 outDir = new Vector3(1.0,1.0,1.0);
         	
         	//Light source
         	if( mat.isEmitter() ){
-        		return;
+        		
+        		emittedRadiance(iRec, outDir, outColor);
         	}else{
+        	
+        		Random rand = new Random();
+        		Point2 seed = new Point2(rand.nextDouble(),rand.nextDouble());
+        		
+        		Vector3 inDir = ray.direction;
         		
         		ProjSolidAngleIlluminator PSAI = new ProjSolidAngleIlluminator();
-        		PSAI.directIllumination(scene);
-
-        		return;
+        		PSAI.directIllumination(scene,inDir,outDir,iRec,seed,outColor);
         	}
-        	
-        	//Get the normal to the surface of intersection with the ray.
-        	Vector3 tempW = iRec.frame.w;
-       		Vector3 N = new Vector3(tempW.x,tempW.y,tempW.z);
-       		
-       		Vector3 V = ray.direction;
-       		
-        	Color matColor		= new Color();
-        	Color ambColor	= new Color();
-        	
-        	scene.getBackground().evaluate(ray.direction,ambColor);
-        	mat.getBRDF(iRec).evaluate( iRec.frame, N , N, matColor );
-        	        	
-        	double r = ambColor.r * matColor.r;
-        	double g = ambColor.g * matColor.g;
-        	double b = ambColor.b * matColor.b;
-        	       		
-       		//Point of intersection of the ray with the surface.
-       		Point3 P = iRec.frame.o;
-       		
-        	//Multiple light sources may be present. Iterate through them.
-        	ArrayList<PointLight> lights = scene.getPointLights();
-       		Iterator<PointLight> itLight = lights.iterator();
-       		
-       		int incidentLightCount = lights.size();
-       		
-       		while( itLight.hasNext() ){
-       			PointLight light = itLight.next();
-       			Color lightDiff = light.diffuse;
-       			Color lightSpec = light.specular;
-       			
-       			Vector3 L = new Vector3(	light.location.x - P.x,
-       										light.location.y - P.y,
-       										light.location.z - P.z);
-       			
-       			L.normalize();
-       			
-       			double L_dot_N = L.dot(N);
-       	      	
-       	      	if(L_dot_N < 0){
-       				incidentLightCount--;
-       				continue;
-       			}
-       			
-       			
-       			//Diffuse component.
-       			r += L_dot_N * matColor.r * lightDiff.r;
-       			g += L_dot_N * matColor.g * lightDiff.g;
-       			b += L_dot_N * matColor.b * lightDiff.b;
-       				
-       		}
-			
-			//Check to see if any light sources hit the surface. If not, the color
-			//at that point is the color of the background.
-			outColor.set( r, g, b);
-			
         	return;
+        	
         }
         
     	scene.getBackground().evaluate(ray.direction,outColor);
@@ -142,7 +94,7 @@ public class DirectOnlyRenderer implements Renderer {
     /**
      * Compute the radiance emitted by a surface.
      * @param iRec      Information about the surface point being shaded
-     * @param dir          The exitant direction (surface coordinates)
+     * @param dir      	The exitant direction (surface coordinates)
      * @param outColor  The emitted radiance is written to this color
      */
     protected void emittedRadiance(IntersectionRecord iRec, Vector3 dir, Color outColor) {
@@ -150,5 +102,13 @@ public class DirectOnlyRenderer implements Renderer {
         // If material is emitting, query it for emission in the relevant direction.
         // If not, the emission is zero.
     	// This function should be called in the rayRadiance(...) method above
+    	
+    	Material mat = iRec.surface.getMaterial();
+    	
+    	//emittedRadiance
+        mat.emittedRadiance(null,outColor);
+        
+        outColor.set( 1.0, 0.0, 1.0);
+    	
     }
 }

@@ -177,7 +177,6 @@ public class Scene {
     
     public void addLight(PointLight plight) {
     	pointLights.add(plight);
-    	System.out.println("Added a light" + pointLights.size());
     }
     
     public ArrayList<PointLight> getPointLights() {

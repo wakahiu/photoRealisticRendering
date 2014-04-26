@@ -72,8 +72,6 @@ public class ProjSolidAngleIlluminator extends DirectIlluminator {
    		
    		Color matColor	= new Color();
         Color ambColor	= new Color();
-        
-        //Ambient lighting.
 	   	scene.getBackground().evaluate(outDir,ambColor);
     	matBRDF.evaluate( iRec.frame, incDir , outDir, matColor );
     	        	

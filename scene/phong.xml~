@@ -2,8 +2,8 @@
   <image> 560 560 </image>
 
   <sampler type="JitteredSampler">
-    <numSamplesU>2</numSamplesU>
-    <numSamplesV>2</numSamplesV>
+    <numSamplesU>3</numSamplesU>
+    <numSamplesV>3</numSamplesV>
   </sampler>
 
   <!--
@@ -18,7 +18,6 @@
   -->
   
   <renderer type="DirectOnlyRenderer">
-      <alpha>4.</alpha>
   </renderer>
 	
   <light type="PointLight">
@@ -61,7 +60,7 @@
 
   <material name="light" type="LambertianEmitter">
     <brdf type="Lambertian">
-      <reflectance>0.78 0.78 0.78</reflectance>
+      <reflectance>0.9 0.0 0.78</reflectance>
     </brdf>
     <radiance>60 60 60</radiance>
   </material>
@@ -84,7 +83,7 @@
   </surface>
 
   <surface type="Sphere">
-    <material ref="green" />
+    <material ref="red" />
     <center>-1.2 -1. 0.</center>
     <radius>0.7</radius>
   </surface>

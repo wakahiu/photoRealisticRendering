@@ -31,7 +31,7 @@ public class AmbientOcclusion implements Renderer {
 		if (scene.getFirstIntersection(iRec, ray)) {
 			
 			ArrayList<PointLight> lights = scene.getPointLights();
-        	System.out.println(lights.size());
+        	//System.out.println(lights.size());
         	
 			Point2 directSeed = new Point2();
             sampler.sample(1, sampleIndex, directSeed);     // this random variable is for incident direction
