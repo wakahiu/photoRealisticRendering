@@ -83,7 +83,7 @@ public class DirectOnlyRenderer implements Renderer {
         		Vector3 inDir = ray.direction;
         		
         		ProjSolidAngleIlluminator PSAI = new ProjSolidAngleIlluminator();
-        		//PSAI.directIllumination(scene,inDir,outDir,iRec,seed,outColor);
+        		PSAI.directIllumination(scene,inDir,outDir,iRec,seed,outColor);
         	}
         	return;
         	

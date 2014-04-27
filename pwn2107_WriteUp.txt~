@@ -1,0 +1,33 @@
+Peter Wakahiu Njenga
+pwn2107
+
+RUN 
+Type "ant" IN carbine-pa4 directory. 
+Grab a cup of coffee, sit back and enjoy the rendering!
+
+THE MODEL
+This project models a room with boxes in it (Cornell room).
+
+RENDERERS
+Phong
+This renderer takes into consideration only direct light at a surface as per the 
+phong reflection model. Because only point light sources are considered and there
+is no checking for occulusion from the light sources, there are no shadows formed.
+However, surfaces facing away from light sources are dark as per the Phong shading
+model. This method is very fast compared to other renderers because there are no
+recursive calls and/or reflections/occusions considered.
+
+DIRECT ONLY
+Direct-Only-Renderer considers light from emitters as well as light that hits
+surfaces directly from luminaires. Because luminaires have spartial extent, objects
+can have soft shadows. This rendered is relatively fast because it does not involve
+any recursive calls.
+
+BRUTEFORCE
+This rendered takes into consideration indirect reflections as well as direct lighting.
+A ray is traced from a pixel/eye into the scene and it bounces off multiple times before
+we terminate computation. Each reflection allows for shoft shadows and for reflections
+of nearby objects to appear on the surfaces of other objects. In addition, light from
+emmiters bounces from objects shedding light on areas that would normally be dark. For this
+rendered, i also considered adding point light sources. Because of the recursive nature of
+the algorithm, rendering takes a lot of time.
