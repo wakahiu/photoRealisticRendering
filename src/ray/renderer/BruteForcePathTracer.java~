@@ -8,6 +8,7 @@ import ray.misc.Ray;
 import ray.misc.Scene;
 import ray.sampling.SampleGenerator;
 import ray.material.Material;
+import ray.misc.LuminaireSamplingRecord;
 
 public class BruteForcePathTracer extends PathTracer {
     /**
@@ -32,6 +33,9 @@ public class BruteForcePathTracer extends PathTracer {
     	//Find the ray intersection with any surface
         IntersectionRecord iRec = new IntersectionRecord();
 
+		if(level == 0)
+			outColor.set(0.0);
+		
         if((level < depthLimit) && scene.getFirstIntersection(iRec,ray) ){
         
         	//System.out.println("In BruteForce: sampleIndex " + sampleIndex + " level " + level);
@@ -42,10 +46,18 @@ public class BruteForcePathTracer extends PathTracer {
         	Material mat = iRec.surface.getMaterial();
         	Vector3 outDir = new Vector3(1.0,1.0,1.0);
         	
+        	
         	//Light source
         	if( mat.isEmitter() ){
         		
         		//emittedRadiance
+        		/*LuminaireSamplingRecord LRec = new LuminaireSamplingRecord();
+		    	LRec.set(iRec);
+		    	LRec.emitDir.set(ray.direction);
+		    	LRec.emitDir.scale(-1);
+				Color emitColor = new Color(0.0,0.0,0.0);
+				outColor.set(0.0,0.0,0.0);
+				*/
 				Color emitColor = new Color(0.0,0.0,0.0);
 				mat.emittedRadiance(null,emitColor);
 				outColor.add(emitColor);
@@ -55,10 +67,8 @@ public class BruteForcePathTracer extends PathTracer {
         	
         	//Consider negating the scene ray.direcion.
     		//Compute (recursively) the amount of light hitting the points.
-    		gatherIllumination(scene, ray.direction, iRec,sampler,sampleIndex,level,outColor);
+    		//gatherIllumination(scene, ray.direction, iRec,sampler,sampleIndex,level,outColor);
     		
-    		
-        	//outColor.set(1.0,0.0,0.6);
     		return;
         	
         }

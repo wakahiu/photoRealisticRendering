@@ -84,7 +84,7 @@ public class ProjSolidAngleIlluminator extends DirectIlluminator {
         	
    		double L_dot_out = 0.0f;
    		   		
-   		while( iterLight.hasNext() ){
+   		while( false && SiterLight.hasNext() ){
    			PointLight light = iterLight.next();
    			Color lightDiff = light.diffuse;
        		Color lightSpec = light.specular;

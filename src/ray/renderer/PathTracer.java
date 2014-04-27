@@ -3,7 +3,7 @@ package ray.renderer;
 import java.lang.Math;
 import java.util.ArrayList;
 import java.util.Iterator;
-
+import java.util.Random;
 
 import ray.brdf.BRDF;
 import ray.material.Material;
@@ -13,6 +13,7 @@ import ray.math.Vector3;
 import ray.misc.Color;
 import ray.misc.IntersectionRecord;
 import ray.misc.Ray;
+import ray.math.Frame3;
 import ray.misc.Scene;
 import ray.sampling.SampleGenerator;
 import ray.math.Point3;
@@ -57,36 +58,38 @@ public abstract class PathTracer extends DirectOnlyRenderer {
    		
     	Material mat = iRec.surface.getMaterial();
     	BRDF matBRDF = mat.getBRDF(iRec);
+    	Frame3 frame = iRec.frame;
     	
     	//Multiple light sources may be present. Iterate through them.
     	ArrayList<PointLight> lights = scene.getPointLights();
    		Iterator<PointLight> iterLight = lights.iterator();
    		
    		//Point of intersection of the ray with the surface.
-   		Point3 P = iRec.frame.o;
+   		Point3 P = frame.o;
    		
         //Ambient lighting as seen from camera
         Color ambColor	= new Color();
 	   	scene.getBackground().evaluate(outDir,ambColor);
 	   	
 	   	//Create a seed from random sampling.
-	   	Point2 seed = new Point2(1.0,2.0);									//<<--------- TODO
+	   	Point2 seed = new Point2(1.0,2.0);
+	   	sampler.sample(sampleIndex,level,seed);
 	   	
     	//Creata new vector in a random direction.
     	Color outWeight = new Color();
     	Vector3 bounceDir = new Vector3();
-    	matBRDF.generate(iRec.frame,outDir,bounceDir,seed,outWeight);
+    	matBRDF.generate(frame,outDir,bounceDir,seed,outWeight);
     	bounceDir.normalize();
     	
     	//Get the material color at this point.
     	Color matColor	= new Color();
-    	matBRDF.evaluate( iRec.frame, bounceDir , outDir, matColor );
+    	matBRDF.evaluate( frame, bounceDir , outDir, matColor );
     	        	
     	double r = ambColor.r*matColor.r;
     	double g = ambColor.g*matColor.g;
     	double b = ambColor.b*matColor.b;
     	
-   		while( iterLight.hasNext()){
+   		while( false & iterLight.hasNext()){
    			PointLight light = iterLight.next();
    			Color lightDiff = light.diffuse;
        		
@@ -107,7 +110,7 @@ public abstract class PathTracer extends DirectOnlyRenderer {
    			}
    			
    			
-    		double matPDF = matBRDF.pdf( iRec.frame , L , outDir );
+    		double matPDF = matBRDF.pdf( frame , L , outDir );
     		
     		r += lightDiff.r * matPDF;
    			g += lightDiff.g * matPDF;
@@ -116,10 +119,10 @@ public abstract class PathTracer extends DirectOnlyRenderer {
    		}
    		
    		//Add light from illuminaraires
-   		Color outRadiance = new Color(0.0,0.0,0.0);
-   		scene.incidentRadiance( P, outDir, outRadiance);
+   		Color outRadiance = new Color(0.0,1.0,0.0);
+   		scene.incidentRadiance( P, bounceDir, outRadiance);
 
-    	double matPDF = Math.PI * matBRDF.pdf(iRec.frame,bounceDir,outDir);
+    	double matPDF = Math.PI * matBRDF.pdf(frame,bounceDir,outDir);
     	
     	/*
     	* Indirect lighting
@@ -128,16 +131,14 @@ public abstract class PathTracer extends DirectOnlyRenderer {
    		Ray rayBounce = new Ray(P,bounceDir);
    		rayBounce.makeOffsetRay();
    		
-   		//rayRadianceRecursive(scene,rayBounce,sampler,sampleIndex,++level,outColor);
+   		rayRadianceRecursive(scene,rayBounce,sampler,sampleIndex,++level,outColor);
    			
-   		/*
-    	outColor.set(	outWeight.r*r/Math.PI + outRadiance.r*matColor.r*matPDF,
+   		Color gatheredColor = new Color(
+   						outWeight.r*r/Math.PI + outRadiance.r*matColor.r*matPDF,
     					outWeight.g*g/Math.PI + outRadiance.g*matColor.g*matPDF,
     					outWeight.b*b/Math.PI + outRadiance.b*matColor.b*matPDF);
-    	*/
-    	outColor.set(	outWeight.r*r/Math.PI + outRadiance.r*matColor.r*matPDF,
-    					outWeight.g*g/Math.PI + outRadiance.g*matColor.g*matPDF,
-    					outWeight.b*b/Math.PI + outRadiance.b*matColor.b*matPDF);
+    					
+    	outColor.add( gatheredColor );
     	
     }
 }
